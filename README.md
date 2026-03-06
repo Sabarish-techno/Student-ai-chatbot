@@ -1,43 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Student Assistant</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
+margin:0;
+}
+
+h1{
+background:#2563eb;
+padding:15px;
+margin:0;
 }
 
 #chat{
-width:80%;
-height:300px;
-margin:auto;
-border:1px solid gray;
+height:60vh;
 overflow:auto;
 padding:10px;
 background:#1e293b;
 }
 
+.message{
+margin:10px;
+padding:10px;
+border-radius:8px;
+}
+
+.user{
+background:#2563eb;
+}
+
+.bot{
+background:#334155;
+}
+
+#controls{
+position:fixed;
+bottom:0;
+width:100%;
+background:#111827;
+padding:10px;
+}
+
 input{
 width:60%;
 padding:10px;
-margin-top:10px;
+border-radius:5px;
+border:none;
 }
 
 button{
-padding:10px 15px;
-margin:5px;
-background:#38bdf8;
+padding:10px;
 border:none;
-cursor:pointer;
+border-radius:5px;
+background:#22c55e;
+color:white;
+margin-left:5px;
 }
 
-h1{
-color:#38bdf8;
-}
 </style>
 </head>
 
@@ -47,18 +74,25 @@ color:#38bdf8;
 
 <div id="chat"></div>
 
+<div id="controls">
+
 <input id="input" placeholder="Ask something..." />
-<br>
 
 <button onclick="send()">Send</button>
-<button onclick="voice()">🎤 Speak</button>
+
+</div>
 
 <script>
 
-const chat=document.getElementById("chat")
+let chat=document.getElementById("chat")
 
-function add(text){
-chat.innerHTML+=text+"<br>"
+function addUser(text){
+chat.innerHTML += "<div class='message user'>You: "+text+"</div>"
+chat.scrollTop=chat.scrollHeight
+}
+
+function addBot(text){
+chat.innerHTML += "<div class='message bot'>Assistant: "+text+"</div>"
 chat.scrollTop=chat.scrollHeight
 }
 
@@ -76,7 +110,11 @@ return "Current time is "+new Date().toLocaleTimeString()
 }
 
 if(command.includes("date")){
-return "Today's date is "+new Date().toDateString()
+return "Today is "+new Date().toDateString()
+}
+
+if(command.includes("hello")){
+return "Hello student. How can I help you today?"
 }
 
 if(command.includes("open youtube")){
@@ -89,48 +127,27 @@ window.open("https://google.com")
 return "Opening Google"
 }
 
-if(command.includes("hello")){
-return "Hello student. How can I help you?"
-}
+return "I am your AI student assistant. Ask about time, date, or websites."
 
-return "I am your AI student assistant. Ask about time, date, or open websites."
 }
 
 function send(){
 
 let input=document.getElementById("input")
+
 let text=input.value
 
-add("<b>You:</b> "+text)
+if(text==="") return
+
+addUser(text)
 
 let response=ai(text)
 
-add("<b>Assistant:</b> "+response)
+addBot(response)
 
 speak(response)
 
 input.value=""
-}
-
-function voice(){
-
-let recognition=new webkitSpeechRecognition()
-
-recognition.onresult=function(event){
-
-let text=event.results[0][0].transcript
-
-add("<b>You:</b> "+text)
-
-let response=ai(text)
-
-add("<b>Assistant:</b> "+response)
-
-speak(response)
-
-}
-
-recognition.start()
 
 }
 

@@ -9,8 +9,59 @@
 body{
 font-family:Arial;
 margin:0;
-background:#0f172a;
+background:linear-gradient(135deg,#0f172a,#1e293b);
 color:white;
+}
+
+/* LOGIN PAGE */
+
+#authPage{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:12px;
+width:260px;
+text-align:center;
+box-shadow:0 0 10px black;
+}
+
+.card input{
+width:90%;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:6px;
+}
+
+.card button{
+width:95%;
+padding:10px;
+margin-top:8px;
+border:none;
+border-radius:6px;
+background:#22c55e;
+color:white;
+font-weight:bold;
+}
+
+.switch{
+margin-top:10px;
+font-size:12px;
+cursor:pointer;
+color:#38bdf8;
+}
+
+/* APP */
+
+#app{
+display:none;
 }
 
 header{
@@ -20,39 +71,11 @@ text-align:center;
 font-size:20px;
 }
 
-#loginPage{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-height:100vh;
-}
-
-#loginPage input{
-padding:10px;
-margin:5px;
-width:200px;
-border:none;
-border-radius:5px;
-}
-
-#loginPage button{
-padding:10px;
-border:none;
-background:#22c55e;
-color:white;
-border-radius:5px;
-}
-
-#app{
-display:none;
-}
-
 #chat{
 height:60vh;
 overflow:auto;
 padding:10px;
-background:#1e293b;
+background:#111827;
 }
 
 .msg{
@@ -66,31 +89,32 @@ background:#2563eb;
 }
 
 .bot{
-background:#334155;
+background:#374151;
 }
 
 #controls{
 position:fixed;
 bottom:0;
 width:100%;
-background:#111827;
+background:#020617;
 padding:10px;
+text-align:center;
 }
 
 #controls input{
 width:60%;
 padding:10px;
 border:none;
-border-radius:5px;
+border-radius:6px;
 }
 
 #controls button{
 padding:10px;
+margin-left:5px;
 border:none;
-border-radius:5px;
+border-radius:6px;
 background:#22c55e;
 color:white;
-margin-left:5px;
 }
 
 </style>
@@ -98,17 +122,27 @@ margin-left:5px;
 
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- AUTH PAGE -->
 
-<div id="loginPage">
+<div id="authPage">
 
-<h2>Student Login</h2>
+<div class="card">
+
+<h2 id="title">Login</h2>
 
 <input id="username" placeholder="Username">
 
-<input id="password" type="password" placeholder="Password">
+<input id="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
+
+<button onclick="signup()">Create Account</button>
+
+<div class="switch">
+Any username and password allowed
+</div>
+
+</div>
 
 </div>
 
@@ -132,23 +166,46 @@ margin-left:5px;
 
 <script>
 
+/* AUTH SYSTEM */
+
+function signup(){
+
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+
+if(user==="") return alert("Enter username")
+
+let users=JSON.parse(localStorage.getItem("users")||"{}")
+
+users[user]=pass
+
+localStorage.setItem("users",JSON.stringify(users))
+
+alert("Account created")
+
+}
+
 function login(){
 
 let user=document.getElementById("username").value
 let pass=document.getElementById("password").value
 
-if(user==="student" && pass==="1234"){
+let users=JSON.parse(localStorage.getItem("users")||"{}")
 
-document.getElementById("loginPage").style.display="none"
+if(users[user]===pass){
+
+document.getElementById("authPage").style.display="none"
 document.getElementById("app").style.display="block"
 
 }else{
 
-alert("Invalid login")
+alert("Wrong username or password")
 
 }
 
 }
+
+/* CHAT */
 
 let chat=document.getElementById("chat")
 
@@ -171,32 +228,12 @@ function studyTip(){
 let tips=[
 "Study in 25 minute sessions.",
 "Revise notes daily.",
-"Practice coding every day.",
+"Practice coding regularly.",
 "Sleep well before exams.",
-"Teach others to remember better."
+"Take small breaks while studying."
 ]
 
 return tips[Math.floor(Math.random()*tips.length)]
-
-}
-
-function saveNote(text){
-
-let notes=localStorage.getItem("notes")||""
-notes+=text+" | "
-localStorage.setItem("notes",notes)
-
-return "Note saved"
-
-}
-
-function showNotes(){
-
-let notes=localStorage.getItem("notes")
-
-if(!notes) return "No notes saved"
-
-return notes
 
 }
 
@@ -235,18 +272,10 @@ return "Invalid calculation"
 }
 }
 
-if(command.startsWith("note")){
-let n=command.replace("note","")
-return saveNote(n)
-}
-
-if(command.includes("show notes"))
-return showNotes()
-
 if(command.includes("study tip"))
 return studyTip()
 
-return "Try commands: time, date, search AI, calc 5+3, note text, study tip"
+return "Try commands like time, date, search AI, calc 5+3, study tip"
 
 }
 

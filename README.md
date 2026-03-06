@@ -1,76 +1,140 @@
-import streamlit as st
-import datetime
-import webbrowser
-import speech_recognition as sr
-import pyttsx3
-import openai
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Student Assistant</title>
 
-openai.api_key = "YOUR_API_KEY"
+<style>
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
 
-engine = pyttsx3.init()
+#chat{
+width:80%;
+height:300px;
+margin:auto;
+border:1px solid gray;
+overflow:auto;
+padding:10px;
+background:#1e293b;
+}
 
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+input{
+width:60%;
+padding:10px;
+margin-top:10px;
+}
 
-def ask_ai(question):
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": question}]
-        )
-        return response.choices[0].message.content
-    except:
-        return "AI service unavailable"
+button{
+padding:10px 15px;
+margin:5px;
+background:#38bdf8;
+border:none;
+cursor:pointer;
+}
 
-def process_command(command):
-    command = command.lower()
+h1{
+color:#38bdf8;
+}
+</style>
+</head>
 
-    if "time" in command:
-        return datetime.datetime.now().strftime("Current time: %H:%M")
+<body>
 
-    elif "date" in command:
-        return datetime.datetime.now().strftime("Today is %d %B %Y")
+<h1>🎓 AI Student Assistant</h1>
 
-    elif "open youtube" in command:
-        webbrowser.open("https://youtube.com")
-        return "Opening YouTube"
+<div id="chat"></div>
 
-    elif "open google" in command:
-        webbrowser.open("https://google.com")
-        return "Opening Google"
+<input id="input" placeholder="Ask something..." />
+<br>
 
-    else:
-        return ask_ai(command)
+<button onclick="send()">Send</button>
+<button onclick="voice()">🎤 Speak</button>
 
-def voice_input():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        st.write("Listening...")
-        audio = recognizer.listen(source)
+<script>
 
-    try:
-        command = recognizer.recognize_google(audio)
-        return command
-    except:
-        return "Sorry, I couldn't understand"
+const chat=document.getElementById("chat")
 
-st.title("🎓 AI Student Voice Assistant")
+function add(text){
+chat.innerHTML+=text+"<br>"
+chat.scrollTop=chat.scrollHeight
+}
 
-st.write("Ask questions, give commands, or use voice.")
+function speak(text){
+let speech=new SpeechSynthesisUtterance(text)
+speechSynthesis.speak(speech)
+}
 
-user_input = st.text_input("Type your question")
+function ai(command){
 
-if st.button("Send"):
-    response = process_command(user_input)
-    st.write("**Assistant:**", response)
-    speak(response)
-    
-if st.button("🎤 Speak"):
-    command = voice_input()
-    st.write("**You said:**", command)
+command=command.toLowerCase()
 
-    response = process_command(command)
-    st.write("**Assistant:**", response)
+if(command.includes("time")){
+return "Current time is "+new Date().toLocaleTimeString()
+}
 
-    speak(response)
+if(command.includes("date")){
+return "Today's date is "+new Date().toDateString()
+}
+
+if(command.includes("open youtube")){
+window.open("https://youtube.com")
+return "Opening YouTube"
+}
+
+if(command.includes("open google")){
+window.open("https://google.com")
+return "Opening Google"
+}
+
+if(command.includes("hello")){
+return "Hello student. How can I help you?"
+}
+
+return "I am your AI student assistant. Ask about time, date, or open websites."
+}
+
+function send(){
+
+let input=document.getElementById("input")
+let text=input.value
+
+add("<b>You:</b> "+text)
+
+let response=ai(text)
+
+add("<b>Assistant:</b> "+response)
+
+speak(response)
+
+input.value=""
+}
+
+function voice(){
+
+let recognition=new webkitSpeechRecognition()
+
+recognition.onresult=function(event){
+
+let text=event.results[0][0].transcript
+
+add("<b>You:</b> "+text)
+
+let response=ai(text)
+
+add("<b>Assistant:</b> "+response)
+
+speak(response)
+
+}
+
+recognition.start()
+
+}
+
+</script>
+
+</body>
+</html>

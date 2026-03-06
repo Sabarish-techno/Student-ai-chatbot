@@ -5,17 +5,14 @@ import speech_recognition as sr
 import pyttsx3
 import openai
 
-# OpenAI API key
 openai.api_key = "YOUR_API_KEY"
 
-# Text to speech
 engine = pyttsx3.init()
 
 def speak(text):
     engine.say(text)
     engine.runAndWait()
 
-# AI response
 def ask_ai(question):
     try:
         response = openai.ChatCompletion.create(
@@ -26,7 +23,6 @@ def ask_ai(question):
     except:
         return "AI service unavailable"
 
-# Command processor
 def process_command(command):
     command = command.lower()
 
@@ -47,7 +43,6 @@ def process_command(command):
     else:
         return ask_ai(command)
 
-# Voice input
 def voice_input():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -60,20 +55,17 @@ def voice_input():
     except:
         return "Sorry, I couldn't understand"
 
-# Streamlit UI
 st.title("🎓 AI Student Voice Assistant")
 
 st.write("Ask questions, give commands, or use voice.")
 
-# Text input
 user_input = st.text_input("Type your question")
 
 if st.button("Send"):
     response = process_command(user_input)
     st.write("**Assistant:**", response)
     speak(response)
-
-# Voice button
+    
 if st.button("🎤 Speak"):
     command = voice_input()
     st.write("**You said:**", command)

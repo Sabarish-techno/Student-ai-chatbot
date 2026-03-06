@@ -89,8 +89,8 @@ margin-top:10px;
 
 <h3>Login</h3>
 
-<input id="username" placeholder="Username">
-<input id="password" placeholder="Password">
+<input id="username" Sabarish="username">
+<input id="password" 123="password">
 
 <button onclick="login()">Login</button>
 

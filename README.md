@@ -1,120 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Student Assistant</title>
+<title>AI Smart Assistant</title>
 
 <style>
 
 body{
 font-family:Arial;
 margin:0;
-background:linear-gradient(135deg,#0f172a,#1e293b);
+background:linear-gradient(45deg,#4facfe,#00f2fe);
 color:white;
-}
-
-/* LOGIN PAGE */
-
-#authPage{
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.card{
-background:#1e293b;
-padding:25px;
-border-radius:12px;
-width:260px;
 text-align:center;
-box-shadow:0 0 10px black;
 }
 
-.card input{
+h1{
+margin-top:20px;
+}
+
+.container{
+margin:auto;
+width:90%;
+max-width:400px;
+background:white;
+color:black;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+margin-top:40px;
+}
+
+input{
 width:90%;
 padding:10px;
-margin:8px 0;
-border:none;
-border-radius:6px;
+margin:10px;
+border-radius:10px;
+border:1px solid #ccc;
 }
 
-.card button{
-width:95%;
-padding:10px;
-margin-top:8px;
+button{
+padding:10px 20px;
 border:none;
-border-radius:6px;
-background:#22c55e;
+border-radius:10px;
+background:#4facfe;
 color:white;
-font-weight:bold;
-}
-
-.switch{
-margin-top:10px;
-font-size:12px;
+font-size:16px;
 cursor:pointer;
-color:#38bdf8;
 }
 
-/* APP */
+button:hover{
+background:#007bff;
+}
 
-#app{
+.hidden{
 display:none;
 }
 
-header{
-background:#2563eb;
-padding:15px;
-text-align:center;
-font-size:20px;
+.robot{
+font-size:80px;
 }
 
-#chat{
-height:60vh;
+.chatbox{
+height:200px;
 overflow:auto;
+border:1px solid #ccc;
 padding:10px;
-background:#111827;
+border-radius:10px;
+margin-bottom:10px;
 }
 
-.msg{
-padding:10px;
-margin:8px;
-border-radius:8px;
+.message{
+margin:5px;
 }
 
 .user{
-background:#2563eb;
+color:blue;
 }
 
 .bot{
-background:#374151;
+color:green;
 }
 
-#controls{
-position:fixed;
-bottom:0;
-width:100%;
-background:#020617;
-padding:10px;
-text-align:center;
-}
-
-#controls input{
-width:60%;
-padding:10px;
-border:none;
-border-radius:6px;
-}
-
-#controls button{
-padding:10px;
-margin-left:5px;
-border:none;
-border-radius:6px;
-background:#22c55e;
-color:white;
+.menu button{
+margin:5px;
 }
 
 </style>
@@ -122,180 +89,161 @@ color:white;
 
 <body>
 
-<!-- AUTH PAGE -->
+<h1>🤖 AI Smart Assistant</h1>
 
-<div id="authPage">
+<!-- LOGIN PAGE -->
 
-<div class="card">
+<div class="container" id="loginPage">
 
-<h2 id="title">Login</h2>
+<h2>Login / Create Account</h2>
 
 <input id="username" placeholder="Username">
-
 <input id="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
 
-<button onclick="signup()">Create Account</button>
+</div>
 
-<div class="switch">
-Any username and password allowed
+
+<!-- DASHBOARD -->
+
+<div class="container hidden" id="dashboard">
+
+<div class="robot">🤖</div>
+
+<h2>Welcome <span id="userDisplay"></span></h2>
+
+<div class="menu">
+<button onclick="showPage('chatPage')">AI Chat</button>
+<button onclick="showPage('featurePage')">Features</button>
+<button onclick="logout()">Logout</button>
 </div>
 
 </div>
 
-</div>
 
-<!-- MAIN APP -->
+<!-- CHAT PAGE -->
 
-<div id="app">
+<div class="container hidden" id="chatPage">
 
-<header>🎓 AI Student Assistant</header>
+<h2>AI Chat</h2>
 
-<div id="chat"></div>
+<div class="chatbox" id="chatbox"></div>
 
-<div id="controls">
+<input id="userInput" placeholder="Ask AI something...">
 
-<input id="input" placeholder="Ask something...">
+<button onclick="sendMessage()">Send</button>
 
-<button onclick="send()">Send</button>
-
-</div>
+<button onclick="back()">Back</button>
 
 </div>
+
+
+<!-- FEATURE PAGE -->
+
+<div class="container hidden" id="featurePage">
+
+<h2>App Features</h2>
+
+<p>🤖 AI Chat Assistant</p>
+<p>📊 Smart Suggestions</p>
+<p>🌾 Crop Advice</p>
+<p>📚 Study Helper</p>
+<p>📅 Daily Planner</p>
+
+<button onclick="back()">Back</button>
+
+</div>
+
+
 
 <script>
 
-/* AUTH SYSTEM */
-
-function signup(){
-
-let user=document.getElementById("username").value
-let pass=document.getElementById("password").value
-
-if(user==="") return alert("Enter username")
-
-let users=JSON.parse(localStorage.getItem("users")||"{}")
-
-users[user]=pass
-
-localStorage.setItem("users",JSON.stringify(users))
-
-alert("Account created")
-
-}
+let currentUser="";
 
 function login(){
 
-let user=document.getElementById("username").value
-let pass=document.getElementById("password").value
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
 
-let users=JSON.parse(localStorage.getItem("users")||"{}")
+if(user.length>0 && pass.length>0){
 
-if(users[user]===pass){
+currentUser=user;
 
-document.getElementById("authPage").style.display="none"
-document.getElementById("app").style.display="block"
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
 
-}else{
+document.getElementById("userDisplay").innerText=user;
 
-alert("Wrong username or password")
+}
+
+else{
+
+alert("Enter username and password");
 
 }
 
 }
 
-/* CHAT */
+function logout(){
 
-let chat=document.getElementById("chat")
-
-function addUser(t){
-chat.innerHTML+=`<div class="msg user">You: ${t}</div>`
-chat.scrollTop=chat.scrollHeight
-}
-
-function addBot(t){
-chat.innerHTML+=`<div class="msg bot">Assistant: ${t}</div>`
-chat.scrollTop=chat.scrollHeight
-}
-
-function speak(t){
-speechSynthesis.speak(new SpeechSynthesisUtterance(t))
-}
-
-function studyTip(){
-
-let tips=[
-"Study in 25 minute sessions.",
-"Revise notes daily.",
-"Practice coding regularly.",
-"Sleep well before exams.",
-"Take small breaks while studying."
-]
-
-return tips[Math.floor(Math.random()*tips.length)]
+location.reload();
 
 }
 
-function ai(command){
+function showPage(page){
 
-command=command.toLowerCase()
+document.getElementById("dashboard").classList.add("hidden");
 
-if(command.includes("time"))
-return "Current time is "+new Date().toLocaleTimeString()
-
-if(command.includes("date"))
-return "Today is "+new Date().toDateString()
-
-if(command.includes("open youtube")){
-window.open("https://youtube.com")
-return "Opening YouTube"
-}
-
-if(command.includes("open google")){
-window.open("https://google.com")
-return "Opening Google"
-}
-
-if(command.startsWith("search")){
-let q=command.replace("search","")
-window.open("https://www.google.com/search?q="+q)
-return "Searching Google for "+q
-}
-
-if(command.startsWith("calc")){
-try{
-let exp=command.replace("calc","")
-return "Result: "+eval(exp)
-}catch{
-return "Invalid calculation"
-}
-}
-
-if(command.includes("study tip"))
-return studyTip()
-
-return "Try commands like time, date, search AI, calc 5+3, study tip"
+document.getElementById(page).classList.remove("hidden");
 
 }
 
-function send(){
+function back(){
 
-let input=document.getElementById("input")
+document.getElementById("chatPage").classList.add("hidden");
+document.getElementById("featurePage").classList.add("hidden");
 
-let text=input.value
+document.getElementById("dashboard").classList.remove("hidden");
 
-if(text==="") return
+}
 
-addUser(text)
+function sendMessage(){
 
-let response=ai(text)
+let input=document.getElementById("userInput");
+let text=input.value;
 
-addBot(response)
+if(text==="") return;
 
-speak(response)
+let chat=document.getElementById("chatbox");
 
-input.value=""
+chat.innerHTML+=`<div class="message user">You: ${text}</div>`;
+
+let reply=getAIResponse(text);
+
+chat.innerHTML+=`<div class="message bot">AI: ${reply}</div>`;
+
+input.value="";
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+function getAIResponse(msg){
+
+msg=msg.toLowerCase();
+
+if(msg.includes("hello")) return "Hello! I am your AI assistant 🤖";
+
+if(msg.includes("ai")) return "AI means machines that can learn and think.";
+
+if(msg.includes("study")) return "Study 1 hour daily and practice coding.";
+
+if(msg.includes("project")) return "You can build AI apps using Python or Java.";
+
+if(msg.includes("crop")) return "Check crop leaves and use disease detection AI.";
+
+return "Interesting question! I am still learning.";
 
 }
 

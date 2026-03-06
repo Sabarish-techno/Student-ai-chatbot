@@ -365,3 +365,10 @@ let explain={
 "Deadlock":"Deadlock occurs when processes wait for each other forever.",
 
 "File
+function getDB(){
+return JSON.parse(localStorage.getItem("AI_DB") || '{"users":{},"notes":{},"chat":{}}')
+}
+
+function saveDB(db){
+localStorage.setItem("AI_DB",JSON.stringify(db))
+}
